@@ -96,9 +96,9 @@ function analyzeCode(changedFiles, prDetails) {
     return __awaiter(this, void 0, void 0, function* () {
         core.info("Analyzing code...");
         const prompt = createPrompt(changedFiles, prDetails);
+        core.info(JSON.stringify(prompt, null, 2));
         const aiResponse = yield getAIResponse(prompt);
         core.info(JSON.stringify(aiResponse, null, 2));
-        console.log(JSON.stringify(aiResponse, null, 2));
         const comments = [];
         if (aiResponse) {
             const newComments = createComments(changedFiles, aiResponse);
