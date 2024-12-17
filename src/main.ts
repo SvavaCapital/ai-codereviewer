@@ -89,9 +89,9 @@ async function analyzeCode(
   core.info("Analyzing code...");
 
   const prompt = createPrompt(changedFiles, prDetails);
+  core.info(JSON.stringify(prompt, null, 2));
   const aiResponse = await getAIResponse(prompt);
   core.info(JSON.stringify(aiResponse, null, 2));
-  console.log(JSON.stringify(aiResponse, null, 2));
 
   const comments: Array<GithubComment> = [];
 
