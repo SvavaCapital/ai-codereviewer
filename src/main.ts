@@ -123,7 +123,7 @@ ${
     ? `- Additional context regarding this PR's project: ${REVIEW_PROJECT_CONTEXT}`
     : ""
 }
-- IMPORTANT: Suggest adding comments to the code if required.
+- IMPORTANT: Suggest adding comments only for complex logic or non-obvious business rules that require explanation.
 - IMPORTANT: Evaluate the entire diff in the PR before adding any comments.
 
 Pull request title: ${prDetails.title}
