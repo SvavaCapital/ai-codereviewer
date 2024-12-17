@@ -44,7 +44,7 @@ async function getPRDetails(): Promise<PRDetails> {
   core.info("Fetching PR details...");
 
   const { repository, number } = JSON.parse(
-    readFileSync(process.env.GITHUB_EVENT_PATH || "", "utf8"),
+    readFileSync(process.env.GITHUB_EVENT_PATH || "", "utf8")
   );
 
   const prResponse = await octokit.pulls.get({
@@ -67,7 +67,7 @@ async function getPRDetails(): Promise<PRDetails> {
 async function getDiff(
   owner: string,
   repo: string,
-  pull_number: number,
+  pull_number: number
 ): Promise<string | null> {
   core.info(`Fetching diff for PR #${pull_number}...`);
 
@@ -84,11 +84,14 @@ async function getDiff(
 
 async function analyzeCode(
   changedFiles: File[],
-  prDetails: PRDetails,
+  prDetails: PRDetails
 ): Promise<Array<GithubComment>> {
   core.info("Analyzing code...");
   core.info(JSON.stringify(prDetails, null, 2));
-  core.info(JSON.stringify(REVIEW_PROJECT_CONTEXT, null, 2));
+  core.info("printing REVIEW_PROJECT_CONTEXT");
+  core.info(REVIEW_PROJECT_CONTEXT);
+  core.info(JSON.stringify(changedFiles, null, 2));
+  core.info("STARTING PROMPT");
   const prompt = createPrompt(changedFiles, prDetails);
   core.info(prompt);
   const aiResponse = await getAIResponse(prompt);
@@ -159,7 +162,7 @@ function createPromptForDiffChunk(file: File, chunk: Chunk): string {
 }
 
 async function getAIResponse(
-  prompt: string,
+  prompt: string
 ): Promise<Array<AICommentResponse>> {
   core.info("Sending request to OpenAI API...");
 
@@ -227,7 +230,7 @@ async function getAIResponse(
 
 function createComments(
   changedFiles: File[],
-  aiResponses: Array<AICommentResponse>,
+  aiResponses: Array<AICommentResponse>
 ): Array<GithubComment> {
   core.info("Creating GitHub comments from AI responses...");
 
@@ -248,7 +251,7 @@ async function createReviewComment(
   owner: string,
   repo: string,
   pull_number: number,
-  comments: Array<GithubComment>,
+  comments: Array<GithubComment>
 ): Promise<void> {
   core.info(`Creating review comment for PR #${pull_number}...`);
 
@@ -261,14 +264,14 @@ async function createReviewComment(
   });
 
   core.info(
-    `Review ${APPROVE_REVIEWS ? "approved" : "commented"} successfully.`,
+    `Review ${APPROVE_REVIEWS ? "approved" : "commented"} successfully.`
   );
 }
 
 async function hasExistingReview(
   owner: string,
   repo: string,
-  pull_number: number,
+  pull_number: number
 ): Promise<boolean> {
   const reviews = await octokit.pulls.listReviews({
     owner,
@@ -283,16 +286,20 @@ async function main() {
     core.info("Starting AI code review process...");
 
     const prDetails = await getPRDetails();
+    core.info(JSON.stringify(prDetails, null, 2));
+    core.info("PR DETAILS FETCHED");
     let diff: string | null;
     const eventData = JSON.parse(
-      readFileSync(process.env.GITHUB_EVENT_PATH ?? "", "utf8"),
+      readFileSync(process.env.GITHUB_EVENT_PATH ?? "", "utf8")
     );
+    core.info(JSON.stringify(eventData, null, 2));
+    core.info("EVENT DATA FETCHED");
 
     core.info(`Processing ${eventData.action} event...`);
     const existingReview = await hasExistingReview(
       prDetails.owner,
       prDetails.repo,
-      prDetails.pull_number,
+      prDetails.pull_number
     );
 
     if (
@@ -302,21 +309,27 @@ async function main() {
       diff = await getDiff(
         prDetails.owner,
         prDetails.repo,
-        prDetails.pull_number,
+        prDetails.pull_number
       );
     } else if (eventData.action === "synchronize" && existingReview) {
-      const newBaseSha = eventData.before;
-      const newHeadSha = eventData.after;
+      // Get the PR details to get the correct base and head
+      const prResponse = await octokit.pulls.get({
+        owner: prDetails.owner,
+        repo: prDetails.repo,
+        pull_number: prDetails.pull_number,
+      });
 
-      core.info(`Comparing commits: ${newBaseSha} -> ${newHeadSha}`);
+      core.info(
+        `Comparing PR base -> head: ${prResponse.data.base.sha} -> ${prResponse.data.head.sha}`
+      );
       const response = await octokit.repos.compareCommits({
         headers: {
           accept: "application/vnd.github.v3.diff",
         },
         owner: prDetails.owner,
         repo: prDetails.repo,
-        base: newBaseSha,
-        head: newHeadSha,
+        base: prResponse.data.base.sha,
+        head: prResponse.data.head.sha,
       });
 
       diff = String(response.data);
@@ -340,7 +353,7 @@ async function main() {
 
     const filteredDiff = changedFiles.filter((file) => {
       return !excludePatterns.some((pattern) =>
-        minimatch(file.to ?? "", pattern),
+        minimatch(file.to ?? "", pattern)
       );
     });
     core.info(`After filtering, ${filteredDiff.length} files remain.`);
@@ -351,7 +364,7 @@ async function main() {
         prDetails.owner,
         prDetails.repo,
         prDetails.pull_number,
-        comments,
+        comments
       );
     } else {
       core.info("No comments to post.");
@@ -368,7 +381,7 @@ core.info("Starting AI code review action...");
 main().catch((error) => {
   core.error("Unhandled error in main function:", error);
   core.setFailed(
-    `Unhandled error in main function: ${(error as Error).message}`,
+    `Unhandled error in main function: ${(error as Error).message}`
   );
   process.exit(1);
 });

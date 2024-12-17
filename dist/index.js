@@ -96,7 +96,10 @@ function analyzeCode(changedFiles, prDetails) {
     return __awaiter(this, void 0, void 0, function* () {
         core.info("Analyzing code...");
         core.info(JSON.stringify(prDetails, null, 2));
-        core.info(JSON.stringify(REVIEW_PROJECT_CONTEXT, null, 2));
+        core.info("printing REVIEW_PROJECT_CONTEXT");
+        core.info(REVIEW_PROJECT_CONTEXT);
+        core.info(JSON.stringify(changedFiles, null, 2));
+        core.info("STARTING PROMPT");
         const prompt = createPrompt(changedFiles, prDetails);
         core.info(prompt);
         const aiResponse = yield getAIResponse(prompt);
@@ -125,7 +128,7 @@ function createPrompt(changedFiles, prDetails) {
 ${REVIEW_PROJECT_CONTEXT
         ? `- Additional context regarding this PR's project: ${REVIEW_PROJECT_CONTEXT}`
         : ""}
-- IMPORTANT: Suggest adding comments to the code if required.
+- IMPORTANT: Suggest adding comments only for complex logic or non-obvious business rules that require explanation.
 - IMPORTANT: Evaluate the entire diff in the PR before adding any comments.
 
 Pull request title: ${prDetails.title}
@@ -256,8 +259,12 @@ function main() {
         try {
             core.info("Starting AI code review process...");
             const prDetails = yield getPRDetails();
+            core.info(JSON.stringify(prDetails, null, 2));
+            core.info("PR DETAILS FETCHED");
             let diff;
             const eventData = JSON.parse((0, fs_1.readFileSync)((_a = process.env.GITHUB_EVENT_PATH) !== null && _a !== void 0 ? _a : "", "utf8"));
+            core.info(JSON.stringify(eventData, null, 2));
+            core.info("EVENT DATA FETCHED");
             core.info(`Processing ${eventData.action} event...`);
             const existingReview = yield hasExistingReview(prDetails.owner, prDetails.repo, prDetails.pull_number);
             if (eventData.action === "opened" ||
@@ -265,17 +272,21 @@ function main() {
                 diff = yield getDiff(prDetails.owner, prDetails.repo, prDetails.pull_number);
             }
             else if (eventData.action === "synchronize" && existingReview) {
-                const newBaseSha = eventData.before;
-                const newHeadSha = eventData.after;
-                core.info(`Comparing commits: ${newBaseSha} -> ${newHeadSha}`);
+                // Get the PR details to get the correct base and head
+                const prResponse = yield octokit.pulls.get({
+                    owner: prDetails.owner,
+                    repo: prDetails.repo,
+                    pull_number: prDetails.pull_number,
+                });
+                core.info(`Comparing PR base -> head: ${prResponse.data.base.sha} -> ${prResponse.data.head.sha}`);
                 const response = yield octokit.repos.compareCommits({
                     headers: {
                         accept: "application/vnd.github.v3.diff",
                     },
                     owner: prDetails.owner,
                     repo: prDetails.repo,
-                    base: newBaseSha,
-                    head: newHeadSha,
+                    base: prResponse.data.base.sha,
+                    head: prResponse.data.head.sha,
                 });
                 diff = String(response.data);
             }
