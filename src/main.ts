@@ -87,9 +87,10 @@ async function analyzeCode(
   prDetails: PRDetails,
 ): Promise<Array<GithubComment>> {
   core.info("Analyzing code...");
-
+  core.info(JSON.stringify(prDetails, null, 2));
+  core.info(JSON.stringify(REVIEW_PROJECT_CONTEXT, null, 2));
   const prompt = createPrompt(changedFiles, prDetails);
-  core.info(JSON.stringify(prompt, null, 2));
+  core.info(prompt);
   const aiResponse = await getAIResponse(prompt);
   core.info(JSON.stringify(aiResponse, null, 2));
 
@@ -122,15 +123,10 @@ ${
     ? `- Additional context regarding this PR's project: ${REVIEW_PROJECT_CONTEXT}`
     : ""
 }
-- IMPORTANT: NEVER suggest adding comments to the code.
+- IMPORTANT: Suggest adding comments only for complex logic or non-obvious business rules that require explanation.
 - IMPORTANT: Evaluate the entire diff in the PR before adding any comments.
 
 Pull request title: ${prDetails.title}
-Pull request description:
-
----
-${prDetails.description}
----
 
 TAKE A DEEP BREATH AND WORK ON THIS THIS PROBLEM STEP-BY-STEP.
 `;

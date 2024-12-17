@@ -95,8 +95,10 @@ function getDiff(owner, repo, pull_number) {
 function analyzeCode(changedFiles, prDetails) {
     return __awaiter(this, void 0, void 0, function* () {
         core.info("Analyzing code...");
+        core.info(JSON.stringify(prDetails, null, 2));
+        core.info(JSON.stringify(REVIEW_PROJECT_CONTEXT, null, 2));
         const prompt = createPrompt(changedFiles, prDetails);
-        core.info(JSON.stringify(prompt, null, 2));
+        core.info(prompt);
         const aiResponse = yield getAIResponse(prompt);
         core.info(JSON.stringify(aiResponse, null, 2));
         const comments = [];
@@ -123,15 +125,10 @@ function createPrompt(changedFiles, prDetails) {
 ${REVIEW_PROJECT_CONTEXT
         ? `- Additional context regarding this PR's project: ${REVIEW_PROJECT_CONTEXT}`
         : ""}
-- IMPORTANT: NEVER suggest adding comments to the code.
+- IMPORTANT: Suggest adding comments to the code if required.
 - IMPORTANT: Evaluate the entire diff in the PR before adding any comments.
 
 Pull request title: ${prDetails.title}
-Pull request description:
-
----
-${prDetails.description}
----
 
 TAKE A DEEP BREATH AND WORK ON THIS THIS PROBLEM STEP-BY-STEP.
 `;
