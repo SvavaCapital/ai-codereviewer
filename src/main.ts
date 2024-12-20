@@ -40,12 +40,31 @@ interface GithubComment {
   line: number;
 }
 
+interface GitHubEvent {
+  repository: {
+    full_name: string;
+    name: string;
+    owner: { login: string };
+  };
+  issue: {
+    number: number;
+  };
+}
+
 async function getPRDetails(): Promise<PRDetails> {
   core.info("Fetching PR details...");
 
-  const { repository, number } = JSON.parse(
+  const eventPayload: GitHubEvent = JSON.parse(
     readFileSync(process.env.GITHUB_EVENT_PATH || "", "utf8")
   );
+
+  core.info(`Repository: ${eventPayload}`);
+
+  const { repository, issue } = eventPayload;
+  const number = issue.number; // This is your PR number
+
+  core.info(`Repository: ${repository.full_name}`);
+  core.info(`PR Number: ${number}`);
 
   const prResponse = await octokit.pulls.get({
     owner: repository.owner.login,

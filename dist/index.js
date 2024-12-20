@@ -63,7 +63,12 @@ function getPRDetails() {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         core.info("Fetching PR details...");
-        const { repository, number } = JSON.parse((0, fs_1.readFileSync)(process.env.GITHUB_EVENT_PATH || "", "utf8"));
+        const eventPayload = JSON.parse((0, fs_1.readFileSync)(process.env.GITHUB_EVENT_PATH || "", "utf8"));
+        core.info(`Repository: ${eventPayload}`);
+        const { repository, issue } = eventPayload;
+        const number = issue.number; // This is your PR number
+        core.info(`Repository: ${repository.full_name}`);
+        core.info(`PR Number: ${number}`);
         const prResponse = yield octokit.pulls.get({
             owner: repository.owner.login,
             repo: repository.name,
