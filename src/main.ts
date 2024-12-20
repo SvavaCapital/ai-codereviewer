@@ -1,9 +1,5 @@
-// import { readFileSync } from "fs";
-// import * as core from "@actions/core";
-// import OpenAI from "openai";
-// import { Octokit } from "@octokit/rest";
-// import parseDiff, { Chunk, File } from "parse-diff";
-// import minimatch from "minimatch";
+import * as core from "@actions/core";
+import { runReview } from "./review";
 
 // const GITHUB_TOKEN: string = core.getInput("GITHUB_TOKEN");
 // const OPENAI_API_KEY: string = core.getInput("OPENAI_API_KEY");
@@ -407,11 +403,12 @@
 //   }
 // }
 
-// core.info("Starting AI code review action...");
-// main().catch((error) => {
-//   core.error("Unhandled error in main function:", error);
-//   core.setFailed(
-//     `Unhandled error in main function: ${(error as Error).message}`
-//   );
-//   process.exit(1);
-// });
+core.info("Starting AI code review action...");
+core.info("Testing: 1 Refactor code...");
+runReview().catch((error) => {
+  core.error("Unhandled error in main function:", error);
+  core.setFailed(
+    `Unhandled error in main function: ${(error as Error).message}`
+  );
+  process.exit(1);
+});
