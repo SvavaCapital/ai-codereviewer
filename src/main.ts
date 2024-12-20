@@ -301,6 +301,7 @@ async function hasExistingReview(
 }
 
 async function main() {
+  core.info(`TEST:1 fix the event type to comment`);
   try {
     core.info("Starting AI code review process...");
 
@@ -352,7 +353,7 @@ async function main() {
       });
 
       diff = String(response.data);
-    } else if (eventData.action === "issue_comment") {
+    } else if (eventData.action === "created") {
       const comment = eventData.comment.body;
       core.info(`Comment: ${comment}`);
 

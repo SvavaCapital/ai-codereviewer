@@ -261,6 +261,7 @@ function hasExistingReview(owner, repo, pull_number) {
 function main() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
+        core.info(`TEST:1 fix the event type to comment`);
         try {
             core.info("Starting AI code review process...");
             const prDetails = yield getPRDetails();
@@ -295,7 +296,7 @@ function main() {
                 });
                 diff = String(response.data);
             }
-            else if (eventData.action === "issue_comment") {
+            else if (eventData.action === "created") {
                 const comment = eventData.comment.body;
                 core.info(`Comment: ${comment}`);
                 diff = yield getDiff(prDetails.owner, prDetails.repo, prDetails.pull_number);
