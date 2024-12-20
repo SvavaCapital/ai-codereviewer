@@ -40,12 +40,31 @@ interface GithubComment {
   line: number;
 }
 
+interface GitHubEvent {
+  repository: {
+    full_name: string;
+    name: string;
+    owner: { login: string };
+  };
+  issue: {
+    number: number;
+  };
+}
+
 async function getPRDetails(): Promise<PRDetails> {
   core.info("Fetching PR details...");
 
-  const { repository, number } = JSON.parse(
+  const eventPayload: GitHubEvent = JSON.parse(
     readFileSync(process.env.GITHUB_EVENT_PATH || "", "utf8")
   );
+
+  core.info(`Repository: ${eventPayload}`);
+
+  const { repository, issue } = eventPayload;
+  const number = issue.number; // This is your PR number
+
+  core.info(`Repository: ${repository.full_name}`);
+  core.info(`PR Number: ${number}`);
 
   const prResponse = await octokit.pulls.get({
     owner: repository.owner.login,
@@ -282,6 +301,7 @@ async function hasExistingReview(
 }
 
 async function main() {
+  core.info(`TEST:1 fix the event type to comment`);
   try {
     core.info("Starting AI code review process...");
 
@@ -333,6 +353,16 @@ async function main() {
       });
 
       diff = String(response.data);
+    } else if (eventData.action === "created") {
+      const comment = eventData.comment.body;
+      core.info(`Comment: ${comment}`);
+
+      diff = await getDiff(
+        prDetails.owner,
+        prDetails.repo,
+        prDetails.pull_number
+      );
+      core.info(`diff: ${diff}`);
     } else {
       core.info(`Unsupported event: ${process.env.GITHUB_EVENT_NAME}`);
       return;
