@@ -1,7 +1,653 @@
 require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 195:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.analyzeCode = void 0;
+const core = __importStar(__nccwpck_require__(2186));
+const promptBuilder_1 = __nccwpck_require__(5069);
+const openaiClient_1 = __nccwpck_require__(8426);
+function analyzeCode(changedFiles, prDetails) {
+    return __awaiter(this, void 0, void 0, function* () {
+        core.info("Analyzing code...");
+        const prompt = (0, promptBuilder_1.createPrompt)(changedFiles, prDetails);
+        const aiResponse = yield (0, openaiClient_1.getAIResponse)(prompt);
+        const comments = createComments(changedFiles, aiResponse);
+        core.info(`Analysis complete. Generated ${comments.length} comments.`);
+        return comments;
+    });
+}
+exports.analyzeCode = analyzeCode;
+function createComments(changedFiles, aiResponses) {
+    return aiResponses
+        .flatMap((aiResponse) => {
+        var _a;
+        const file = changedFiles.find((file) => file.to === aiResponse.file);
+        return {
+            body: aiResponse.reviewComment,
+            path: (_a = file === null || file === void 0 ? void 0 : file.to) !== null && _a !== void 0 ? _a : "",
+            line: Number(aiResponse.lineNumber),
+        };
+    })
+        .filter((comments) => comments.path !== "");
+}
+
+
+/***/ }),
+
+/***/ 88:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RESPONSE_TOKENS = exports.APPROVE_REVIEWS = exports.REVIEW_PROJECT_CONTEXT = exports.REVIEW_MAX_COMMENTS = exports.OPENAI_API_MODEL = exports.OPENAI_API_KEY = exports.GITHUB_TOKEN = void 0;
+const core = __importStar(__nccwpck_require__(2186));
+exports.GITHUB_TOKEN = core.getInput("GITHUB_TOKEN");
+exports.OPENAI_API_KEY = core.getInput("OPENAI_API_KEY");
+exports.OPENAI_API_MODEL = core.getInput("OPENAI_API_MODEL");
+exports.REVIEW_MAX_COMMENTS = core.getInput("REVIEW_MAX_COMMENTS");
+exports.REVIEW_PROJECT_CONTEXT = core.getInput("REVIEW_PROJECT_CONTEXT");
+exports.APPROVE_REVIEWS = core.getInput("APPROVE_REVIEWS") === "true";
+exports.RESPONSE_TOKENS = 1024;
+
+
+/***/ }),
+
+/***/ 5928:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getEventData = exports.getCompareDiff = exports.createReviewComment = exports.hasExistingReview = exports.getDiff = exports.getPRDetails = void 0;
+const rest_1 = __nccwpck_require__(5375);
+const fs_1 = __nccwpck_require__(7147);
+const core = __importStar(__nccwpck_require__(2186));
+const config_1 = __nccwpck_require__(88);
+const octokit = new rest_1.Octokit({ auth: config_1.GITHUB_TOKEN });
+function getPRDetails() {
+    var _a, _b;
+    return __awaiter(this, void 0, void 0, function* () {
+        core.info("Fetching PR details...");
+        const eventPayload = JSON.parse((0, fs_1.readFileSync)(process.env.GITHUB_EVENT_PATH || "", "utf8"));
+        core.info(`eventPayload fetched: ${JSON.stringify(eventPayload, null, 2)}`);
+        const { repository, action } = eventPayload;
+        let number = null;
+        switch (action) {
+            case "opened":
+            case "synchronize":
+                core.info("Action is opened or synchronized");
+                number = eventPayload.number;
+                break;
+            case "created":
+                core.info("Action is created");
+                number = eventPayload.issue.number;
+                break;
+            default:
+                core.info("Action is not recognized");
+        }
+        if (number === null) {
+            throw new Error("PR number could not be determined from the event payload.");
+        }
+        core.info(`Repository: ${repository.full_name}`);
+        core.info(`PR Number: ${number}`);
+        const prResponse = yield octokit.pulls.get({
+            owner: repository.owner.login,
+            repo: repository.name,
+            pull_number: number,
+        });
+        core.info(`PR details fetched for PR #${number}`);
+        return {
+            owner: repository.owner.login,
+            repo: repository.name,
+            pull_number: number,
+            title: (_a = prResponse.data.title) !== null && _a !== void 0 ? _a : "",
+            description: (_b = prResponse.data.body) !== null && _b !== void 0 ? _b : "",
+        };
+    });
+}
+exports.getPRDetails = getPRDetails;
+function getDiff(owner, repo, pull_number) {
+    return __awaiter(this, void 0, void 0, function* () {
+        core.info(`Fetching diff for PR #${pull_number}...`);
+        const response = yield octokit.pulls.get({
+            owner,
+            repo,
+            pull_number,
+            mediaType: { format: "diff" },
+        });
+        // @ts-expect-error - response.data is a string
+        return response.data;
+    });
+}
+exports.getDiff = getDiff;
+function hasExistingReview(owner, repo, pull_number) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const reviews = yield octokit.pulls.listReviews({
+            owner,
+            repo,
+            pull_number,
+        });
+        return reviews.data.length > 0;
+    });
+}
+exports.hasExistingReview = hasExistingReview;
+function createReviewComment(owner, repo, pull_number, comments) {
+    return __awaiter(this, void 0, void 0, function* () {
+        core.info(`Creating review comment for PR #${pull_number}...`);
+        yield octokit.pulls.createReview({
+            owner,
+            repo,
+            pull_number,
+            comments,
+            event: config_1.APPROVE_REVIEWS ? "APPROVE" : "COMMENT",
+        });
+        core.info(`Review ${config_1.APPROVE_REVIEWS ? "approved" : "commented"} successfully.`);
+    });
+}
+exports.createReviewComment = createReviewComment;
+function getCompareDiff(owner, repo, base, head) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield octokit.repos.compareCommits({
+            headers: {
+                accept: "application/vnd.github.v3.diff",
+            },
+            owner,
+            repo,
+            base,
+            head,
+        });
+        return String(response.data);
+    });
+}
+exports.getCompareDiff = getCompareDiff;
+function getEventData() {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        return JSON.parse((0, fs_1.readFileSync)((_a = process.env.GITHUB_EVENT_PATH) !== null && _a !== void 0 ? _a : "", "utf8"));
+    });
+}
+exports.getEventData = getEventData;
+
+
+/***/ }),
+
 /***/ 3109:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const core = __importStar(__nccwpck_require__(2186));
+const review_1 = __nccwpck_require__(1366);
+// const GITHUB_TOKEN: string = core.getInput("GITHUB_TOKEN");
+// const OPENAI_API_KEY: string = core.getInput("OPENAI_API_KEY");
+// const OPENAI_API_MODEL: string = core.getInput("OPENAI_API_MODEL");
+// const REVIEW_MAX_COMMENTS: string = core.getInput("REVIEW_MAX_COMMENTS");
+// const REVIEW_PROJECT_CONTEXT: string = core.getInput("REVIEW_PROJECT_CONTEXT");
+// const APPROVE_REVIEWS: boolean = core.getInput("APPROVE_REVIEWS") === "true";
+// const RESPONSE_TOKENS = 1024;
+// const octokit = new Octokit({ auth: GITHUB_TOKEN });
+// const openai = new OpenAI({
+//   apiKey: OPENAI_API_KEY,
+// });
+// interface PRDetails {
+//   owner: string;
+//   repo: string;
+//   pull_number: number;
+//   title: string;
+//   description: string;
+// }
+// interface AICommentResponse {
+//   file: string;
+//   lineNumber: string;
+//   reviewComment: string;
+// }
+// interface GithubComment {
+//   body: string;
+//   path: string;
+//   line: number;
+// }
+// interface GitHubEvent {
+//   repository: {
+//     full_name: string;
+//     name: string;
+//     owner: { login: string };
+//   };
+//   issue: {
+//     number: number;
+//   };
+// }
+// async function getPRDetails(): Promise<PRDetails> {
+//   core.info("Fetching PR details...");
+//   const eventPayload: GitHubEvent = JSON.parse(
+//     readFileSync(process.env.GITHUB_EVENT_PATH || "", "utf8")
+//   );
+//   core.info(`Repository: ${eventPayload}`);
+//   const { repository, issue } = eventPayload;
+//   const number = issue.number; // This is your PR number
+//   core.info(`Repository: ${repository.full_name}`);
+//   core.info(`PR Number: ${number}`);
+//   const prResponse = await octokit.pulls.get({
+//     owner: repository.owner.login,
+//     repo: repository.name,
+//     pull_number: number,
+//   });
+//   core.info(`PR details fetched for PR #${number}`);
+//   return {
+//     owner: repository.owner.login,
+//     repo: repository.name,
+//     pull_number: number,
+//     title: prResponse.data.title ?? "",
+//     description: prResponse.data.body ?? "",
+//   };
+// }
+// async function getDiff(
+//   owner: string,
+//   repo: string,
+//   pull_number: number
+// ): Promise<string | null> {
+//   core.info(`Fetching diff for PR #${pull_number}...`);
+//   const response = await octokit.pulls.get({
+//     owner,
+//     repo,
+//     pull_number,
+//     mediaType: { format: "diff" },
+//   });
+//   // @ts-expect-error - response.data is a string
+//   return response.data;
+// }
+// async function analyzeCode(
+//   changedFiles: File[],
+//   prDetails: PRDetails
+// ): Promise<Array<GithubComment>> {
+//   core.info("Analyzing code...");
+//   core.info(JSON.stringify(prDetails, null, 2));
+//   core.info("printing REVIEW_PROJECT_CONTEXT");
+//   core.info(REVIEW_PROJECT_CONTEXT);
+//   core.info(JSON.stringify(changedFiles, null, 2));
+//   core.info("STARTING PROMPT");
+//   const prompt = createPrompt(changedFiles, prDetails);
+//   core.info(prompt);
+//   const aiResponse = await getAIResponse(prompt);
+//   core.info(JSON.stringify(aiResponse, null, 2));
+//   const comments: Array<GithubComment> = [];
+//   if (aiResponse) {
+//     const newComments = createComments(changedFiles, aiResponse);
+//     if (newComments) {
+//       comments.push(...newComments);
+//     }
+//   }
+//   core.info(`Analysis complete. Generated ${comments.length} comments.`);
+//   return comments;
+// }
+// function createPrompt(changedFiles: File[], prDetails: PRDetails): string {
+//   core.info("Creating prompt for AI...");
+//   const problemOutline = `Your task is to review pull requests (PR). Instructions:
+// - Provide the response in following JSON format:  {"comments": [{"file": <file name>,  "lineNumber":  <line_number>, "reviewComment": "<review comment>"}]}
+// - DO NOT give positive comments or compliments.
+// - DO NOT give advice on renaming variable names or writing more descriptive variables.
+// - Provide comments and suggestions ONLY if there is something to improve, otherwise return an empty array.
+// - Provide at most ${REVIEW_MAX_COMMENTS} comments. It's up to you how to decide which comments to include.
+// - Write the comment in GitHub Markdown format.
+// - Use the given description only for the overall context and only comment the code.
+// ${
+//   REVIEW_PROJECT_CONTEXT
+//     ? `- Additional context regarding this PR's project: ${REVIEW_PROJECT_CONTEXT}`
+//     : ""
+// }
+// - IMPORTANT: Suggest adding comments only for complex logic or non-obvious business rules that require explanation.
+// - IMPORTANT: Evaluate the entire diff in the PR before adding any comments.
+// Pull request title: ${prDetails.title}
+// TAKE A DEEP BREATH AND WORK ON THIS THIS PROBLEM STEP-BY-STEP.
+// `;
+//   const diffChunksPrompt = new Array();
+//   for (const file of changedFiles) {
+//     if (file.to === "/dev/null") continue; // Ignore deleted files
+//     for (const chunk of file.chunks) {
+//       diffChunksPrompt.push(createPromptForDiffChunk(file, chunk));
+//     }
+//   }
+//   core.info("Prompt created successfully.");
+//   return `${problemOutline}\n ${diffChunksPrompt.join("\n")}`;
+// }
+// function createPromptForDiffChunk(file: File, chunk: Chunk): string {
+//   return `\n
+//   Review the following code diff in the file "${file.to}". Git diff to review:
+//   \`\`\`diff
+//   ${chunk.content}
+//   ${chunk.changes
+//     // @ts-expect-error - ln and ln2 exists where needed
+//     .map((c) => `${c.ln ? c.ln : c.ln2} ${c.content}`)
+//     .join("\n")}
+//   \`\`\`
+//   `;
+// }
+// async function getAIResponse(
+//   prompt: string
+// ): Promise<Array<AICommentResponse>> {
+//   core.info("Sending request to OpenAI API...");
+//   const queryConfig = {
+//     model: OPENAI_API_MODEL,
+//     temperature: 0.2,
+//     max_tokens: RESPONSE_TOKENS,
+//     top_p: 1,
+//     frequency_penalty: 0,
+//     presence_penalty: 0,
+//     response_format: {
+//       type: "json_object",
+//     } as const,
+//   };
+//   try {
+//     const response = await openai.chat.completions.create({
+//       ...queryConfig,
+//       messages: [
+//         {
+//           role: "system",
+//           content: prompt,
+//         },
+//       ],
+//     });
+//     if (!response.choices || response.choices.length === 0) {
+//       throw new Error("OpenAI API returned an invalid response");
+//     }
+//     core.info("Received response from OpenAI API.");
+//     const res = response.choices[0].message?.content?.trim() || "{}";
+//     // Remove any markdown formatting and ensure valid JSON
+//     const jsonString = res.replace(/^```json\s*|\s*```$/g, "").trim();
+//     try {
+//       let data = JSON.parse(jsonString);
+//       if (!Array.isArray(data?.comments)) {
+//         throw new Error("Invalid response from OpenAI API");
+//       }
+//       return data.comments;
+//     } catch (parseError) {
+//       core.error(`Failed to parse JSON: ${jsonString}`);
+//       core.error(`Parse error: ${parseError}`);
+//       throw parseError;
+//     }
+//   } catch (error: any) {
+//     core.error("Error Message:", error?.message || error);
+//     if (error?.response) {
+//       core.error("Response Data:", error.response.data);
+//       core.error("Response Status:", error.response.status);
+//       core.error("Response Headers:", error.response.headers);
+//     }
+//     if (error?.config) {
+//       core.error("Config:", error.config);
+//     }
+//     core.setFailed(`OpenAI API request failed: ${error.message}`);
+//     throw error;
+//   }
+// }
+// function createComments(
+//   changedFiles: File[],
+//   aiResponses: Array<AICommentResponse>
+// ): Array<GithubComment> {
+//   core.info("Creating GitHub comments from AI responses...");
+//   return aiResponses
+//     .flatMap((aiResponse) => {
+//       const file = changedFiles.find((file) => file.to === aiResponse.file);
+//       return {
+//         body: aiResponse.reviewComment,
+//         path: file?.to ?? "",
+//         line: Number(aiResponse.lineNumber),
+//       };
+//     })
+//     .filter((comments) => comments.path !== "");
+// }
+// async function createReviewComment(
+//   owner: string,
+//   repo: string,
+//   pull_number: number,
+//   comments: Array<GithubComment>
+// ): Promise<void> {
+//   core.info(`Creating review comment for PR #${pull_number}...`);
+//   await octokit.pulls.createReview({
+//     owner,
+//     repo,
+//     pull_number,
+//     comments,
+//     event: APPROVE_REVIEWS ? "APPROVE" : "COMMENT",
+//   });
+//   core.info(
+//     `Review ${APPROVE_REVIEWS ? "approved" : "commented"} successfully.`
+//   );
+// }
+// async function hasExistingReview(
+//   owner: string,
+//   repo: string,
+//   pull_number: number
+// ): Promise<boolean> {
+//   const reviews = await octokit.pulls.listReviews({
+//     owner,
+//     repo,
+//     pull_number,
+//   });
+//   return reviews.data.length > 0;
+// }
+// async function main() {
+//   core.info(`TEST:1 fix the event type to comment`);
+//   try {
+//     core.info("Starting AI code review process...");
+//     const prDetails = await getPRDetails();
+//     core.info(JSON.stringify(prDetails, null, 2));
+//     core.info("PR DETAILS FETCHED");
+//     let diff: string | null;
+//     const eventData = JSON.parse(
+//       readFileSync(process.env.GITHUB_EVENT_PATH ?? "", "utf8")
+//     );
+//     core.info(JSON.stringify(eventData, null, 2));
+//     core.info("EVENT DATA FETCHED");
+//     core.info(`Processing ${eventData.action} event...`);
+//     const existingReview = await hasExistingReview(
+//       prDetails.owner,
+//       prDetails.repo,
+//       prDetails.pull_number
+//     );
+//     if (
+//       eventData.action === "opened" ||
+//       (eventData.action === "synchronize" && !existingReview)
+//     ) {
+//       diff = await getDiff(
+//         prDetails.owner,
+//         prDetails.repo,
+//         prDetails.pull_number
+//       );
+//     } else if (eventData.action === "synchronize" && existingReview) {
+//       // Get the PR details to get the correct base and head
+//       const prResponse = await octokit.pulls.get({
+//         owner: prDetails.owner,
+//         repo: prDetails.repo,
+//         pull_number: prDetails.pull_number,
+//       });
+//       core.info(
+//         `Comparing PR base -> head: ${prResponse.data.base.sha} -> ${prResponse.data.head.sha}`
+//       );
+//       const response = await octokit.repos.compareCommits({
+//         headers: {
+//           accept: "application/vnd.github.v3.diff",
+//         },
+//         owner: prDetails.owner,
+//         repo: prDetails.repo,
+//         base: prResponse.data.base.sha,
+//         head: prResponse.data.head.sha,
+//       });
+//       diff = String(response.data);
+//     } else if (eventData.action === "created") {
+//       const comment = eventData.comment.body;
+//       core.info(`Comment: ${comment}`);
+//       diff = await getDiff(
+//         prDetails.owner,
+//         prDetails.repo,
+//         prDetails.pull_number
+//       );
+//       core.info(`diff: ${diff}`);
+//     } else {
+//       core.info(`Unsupported event: ${process.env.GITHUB_EVENT_NAME}`);
+//       return;
+//     }
+//     if (!diff) {
+//       core.info("No diff found");
+//       return;
+//     }
+//     const changedFiles = parseDiff(diff);
+//     core.info(`Found ${changedFiles.length} changed files.`);
+//     const excludePatterns = core
+//       .getInput("exclude")
+//       .split(",")
+//       .map((s) => s.trim());
+//     const filteredDiff = changedFiles.filter((file) => {
+//       return !excludePatterns.some((pattern) =>
+//         minimatch(file.to ?? "", pattern)
+//       );
+//     });
+//     core.info(`After filtering, ${filteredDiff.length} files remain.`);
+//     const comments = await analyzeCode(filteredDiff, prDetails);
+//     if (APPROVE_REVIEWS || comments.length > 0) {
+//       await createReviewComment(
+//         prDetails.owner,
+//         prDetails.repo,
+//         prDetails.pull_number,
+//         comments
+//       );
+//     } else {
+//       core.info("No comments to post.");
+//     }
+//     core.info("AI code review process completed successfully.");
+//   } catch (error: any) {
+//     core.error("Error:", error);
+//     core.setFailed(`Action failed: ${error.message}`);
+//     process.exit(1); // This line ensures the GitHub action fails
+//   }
+// }
+core.info("Starting AI code review action...");
+core.info("Testing: 2 Refactor code...");
+(0, review_1.runReview)().catch((error) => {
+    core.error("Unhandled error in main function:", error);
+    core.setFailed(`Unhandled error in main function: ${error.message}`);
+    process.exit(1);
+});
+
+
+/***/ }),
+
+/***/ 8426:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -42,142 +688,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const fs_1 = __nccwpck_require__(7147);
+exports.getAIResponse = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const openai_1 = __importDefault(__nccwpck_require__(47));
-const rest_1 = __nccwpck_require__(5375);
-const parse_diff_1 = __importDefault(__nccwpck_require__(4833));
-const minimatch_1 = __importDefault(__nccwpck_require__(2002));
-const GITHUB_TOKEN = core.getInput("GITHUB_TOKEN");
-const OPENAI_API_KEY = core.getInput("OPENAI_API_KEY");
-const OPENAI_API_MODEL = core.getInput("OPENAI_API_MODEL");
-const REVIEW_MAX_COMMENTS = core.getInput("REVIEW_MAX_COMMENTS");
-const REVIEW_PROJECT_CONTEXT = core.getInput("REVIEW_PROJECT_CONTEXT");
-const APPROVE_REVIEWS = core.getInput("APPROVE_REVIEWS") === "true";
-const RESPONSE_TOKENS = 1024;
-const octokit = new rest_1.Octokit({ auth: GITHUB_TOKEN });
-const openai = new openai_1.default({
-    apiKey: OPENAI_API_KEY,
-});
-function getPRDetails() {
-    var _a, _b;
-    return __awaiter(this, void 0, void 0, function* () {
-        core.info("Fetching PR details...");
-        const eventPayload = JSON.parse((0, fs_1.readFileSync)(process.env.GITHUB_EVENT_PATH || "", "utf8"));
-        core.info(`Repository: ${eventPayload}`);
-        const { repository, issue } = eventPayload;
-        const number = issue.number; // This is your PR number
-        core.info(`Repository: ${repository.full_name}`);
-        core.info(`PR Number: ${number}`);
-        const prResponse = yield octokit.pulls.get({
-            owner: repository.owner.login,
-            repo: repository.name,
-            pull_number: number,
-        });
-        core.info(`PR details fetched for PR #${number}`);
-        return {
-            owner: repository.owner.login,
-            repo: repository.name,
-            pull_number: number,
-            title: (_a = prResponse.data.title) !== null && _a !== void 0 ? _a : "",
-            description: (_b = prResponse.data.body) !== null && _b !== void 0 ? _b : "",
-        };
-    });
-}
-function getDiff(owner, repo, pull_number) {
-    return __awaiter(this, void 0, void 0, function* () {
-        core.info(`Fetching diff for PR #${pull_number}...`);
-        const response = yield octokit.pulls.get({
-            owner,
-            repo,
-            pull_number,
-            mediaType: { format: "diff" },
-        });
-        // @ts-expect-error - response.data is a string
-        return response.data;
-    });
-}
-function analyzeCode(changedFiles, prDetails) {
-    return __awaiter(this, void 0, void 0, function* () {
-        core.info("Analyzing code...");
-        core.info(JSON.stringify(prDetails, null, 2));
-        core.info("printing REVIEW_PROJECT_CONTEXT");
-        core.info(REVIEW_PROJECT_CONTEXT);
-        core.info(JSON.stringify(changedFiles, null, 2));
-        core.info("STARTING PROMPT");
-        const prompt = createPrompt(changedFiles, prDetails);
-        core.info(prompt);
-        const aiResponse = yield getAIResponse(prompt);
-        core.info(JSON.stringify(aiResponse, null, 2));
-        const comments = [];
-        if (aiResponse) {
-            const newComments = createComments(changedFiles, aiResponse);
-            if (newComments) {
-                comments.push(...newComments);
-            }
-        }
-        core.info(`Analysis complete. Generated ${comments.length} comments.`);
-        return comments;
-    });
-}
-function createPrompt(changedFiles, prDetails) {
-    core.info("Creating prompt for AI...");
-    const problemOutline = `Your task is to review pull requests (PR). Instructions:
-- Provide the response in following JSON format:  {"comments": [{"file": <file name>,  "lineNumber":  <line_number>, "reviewComment": "<review comment>"}]}
-- DO NOT give positive comments or compliments.
-- DO NOT give advice on renaming variable names or writing more descriptive variables.
-- Provide comments and suggestions ONLY if there is something to improve, otherwise return an empty array.
-- Provide at most ${REVIEW_MAX_COMMENTS} comments. It's up to you how to decide which comments to include.
-- Write the comment in GitHub Markdown format.
-- Use the given description only for the overall context and only comment the code.
-${REVIEW_PROJECT_CONTEXT
-        ? `- Additional context regarding this PR's project: ${REVIEW_PROJECT_CONTEXT}`
-        : ""}
-- IMPORTANT: Suggest adding comments only for complex logic or non-obvious business rules that require explanation.
-- IMPORTANT: Evaluate the entire diff in the PR before adding any comments.
-
-Pull request title: ${prDetails.title}
-
-TAKE A DEEP BREATH AND WORK ON THIS THIS PROBLEM STEP-BY-STEP.
-`;
-    const diffChunksPrompt = new Array();
-    for (const file of changedFiles) {
-        if (file.to === "/dev/null")
-            continue; // Ignore deleted files
-        for (const chunk of file.chunks) {
-            diffChunksPrompt.push(createPromptForDiffChunk(file, chunk));
-        }
-    }
-    core.info("Prompt created successfully.");
-    return `${problemOutline}\n ${diffChunksPrompt.join("\n")}`;
-}
-function createPromptForDiffChunk(file, chunk) {
-    return `\n
-  Review the following code diff in the file "${file.to}". Git diff to review:
-
-  \`\`\`diff
-  ${chunk.content}
-  ${chunk.changes
-        // @ts-expect-error - ln and ln2 exists where needed
-        .map((c) => `${c.ln ? c.ln : c.ln2} ${c.content}`)
-        .join("\n")}
-  \`\`\`
-  `;
-}
+const config_1 = __nccwpck_require__(88);
+const openai = new openai_1.default({ apiKey: config_1.OPENAI_API_KEY });
 function getAIResponse(prompt) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         core.info("Sending request to OpenAI API...");
         const queryConfig = {
-            model: OPENAI_API_MODEL,
+            model: config_1.OPENAI_API_MODEL,
             temperature: 0.2,
-            max_tokens: RESPONSE_TOKENS,
+            max_tokens: config_1.RESPONSE_TOKENS,
             top_p: 1,
             frequency_penalty: 0,
             presence_penalty: 0,
-            response_format: {
-                type: "json_object",
-            },
         };
         try {
             const response = yield openai.chat.completions.create(Object.assign(Object.assign({}, queryConfig), { messages: [
@@ -189,25 +715,16 @@ function getAIResponse(prompt) {
             if (!response.choices || response.choices.length === 0) {
                 throw new Error("OpenAI API returned an invalid response");
             }
-            core.info("Received response from OpenAI API.");
             const res = ((_b = (_a = response.choices[0].message) === null || _a === void 0 ? void 0 : _a.content) === null || _b === void 0 ? void 0 : _b.trim()) || "{}";
-            // Remove any markdown formatting and ensure valid JSON
             const jsonString = res.replace(/^```json\s*|\s*```$/g, "").trim();
-            try {
-                let data = JSON.parse(jsonString);
-                if (!Array.isArray(data === null || data === void 0 ? void 0 : data.comments)) {
-                    throw new Error("Invalid response from OpenAI API");
-                }
-                return data.comments;
+            const data = JSON.parse(jsonString);
+            if (!Array.isArray(data === null || data === void 0 ? void 0 : data.comments)) {
+                throw new Error("Invalid response from OpenAI API");
             }
-            catch (parseError) {
-                core.error(`Failed to parse JSON: ${jsonString}`);
-                core.error(`Parse error: ${parseError}`);
-                throw parseError;
-            }
+            return data.comments;
         }
         catch (error) {
-            core.error("Error Message:", (error === null || error === void 0 ? void 0 : error.message) || error);
+            core.error("Error communicating with OpenAI:", error);
             if (error === null || error === void 0 ? void 0 : error.response) {
                 core.error("Response Data:", error.response.data);
                 core.error("Response Status:", error.response.status);
@@ -216,132 +733,184 @@ function getAIResponse(prompt) {
             if (error === null || error === void 0 ? void 0 : error.config) {
                 core.error("Config:", error.config);
             }
-            core.setFailed(`OpenAI API request failed: ${error.message}`);
             throw error;
         }
     });
 }
-function createComments(changedFiles, aiResponses) {
-    core.info("Creating GitHub comments from AI responses...");
-    return aiResponses
-        .flatMap((aiResponse) => {
-        var _a;
-        const file = changedFiles.find((file) => file.to === aiResponse.file);
-        return {
-            body: aiResponse.reviewComment,
-            path: (_a = file === null || file === void 0 ? void 0 : file.to) !== null && _a !== void 0 ? _a : "",
-            line: Number(aiResponse.lineNumber),
-        };
-    })
-        .filter((comments) => comments.path !== "");
-}
-function createReviewComment(owner, repo, pull_number, comments) {
-    return __awaiter(this, void 0, void 0, function* () {
-        core.info(`Creating review comment for PR #${pull_number}...`);
-        yield octokit.pulls.createReview({
-            owner,
-            repo,
-            pull_number,
-            comments,
-            event: APPROVE_REVIEWS ? "APPROVE" : "COMMENT",
-        });
-        core.info(`Review ${APPROVE_REVIEWS ? "approved" : "commented"} successfully.`);
-    });
-}
-function hasExistingReview(owner, repo, pull_number) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const reviews = yield octokit.pulls.listReviews({
-            owner,
-            repo,
-            pull_number,
-        });
-        return reviews.data.length > 0;
-    });
-}
-function main() {
-    var _a;
-    return __awaiter(this, void 0, void 0, function* () {
-        core.info(`TEST:1 fix the event type to comment`);
-        try {
-            core.info("Starting AI code review process...");
-            const prDetails = yield getPRDetails();
-            core.info(JSON.stringify(prDetails, null, 2));
-            core.info("PR DETAILS FETCHED");
-            let diff;
-            const eventData = JSON.parse((0, fs_1.readFileSync)((_a = process.env.GITHUB_EVENT_PATH) !== null && _a !== void 0 ? _a : "", "utf8"));
-            core.info(JSON.stringify(eventData, null, 2));
-            core.info("EVENT DATA FETCHED");
-            core.info(`Processing ${eventData.action} event...`);
-            const existingReview = yield hasExistingReview(prDetails.owner, prDetails.repo, prDetails.pull_number);
-            if (eventData.action === "opened" ||
-                (eventData.action === "synchronize" && !existingReview)) {
-                diff = yield getDiff(prDetails.owner, prDetails.repo, prDetails.pull_number);
-            }
-            else if (eventData.action === "synchronize" && existingReview) {
-                // Get the PR details to get the correct base and head
-                const prResponse = yield octokit.pulls.get({
-                    owner: prDetails.owner,
-                    repo: prDetails.repo,
-                    pull_number: prDetails.pull_number,
-                });
-                core.info(`Comparing PR base -> head: ${prResponse.data.base.sha} -> ${prResponse.data.head.sha}`);
-                const response = yield octokit.repos.compareCommits({
-                    headers: {
-                        accept: "application/vnd.github.v3.diff",
-                    },
-                    owner: prDetails.owner,
-                    repo: prDetails.repo,
-                    base: prResponse.data.base.sha,
-                    head: prResponse.data.head.sha,
-                });
-                diff = String(response.data);
-            }
-            else if (eventData.action === "created") {
-                const comment = eventData.comment.body;
-                core.info(`Comment: ${comment}`);
-                diff = yield getDiff(prDetails.owner, prDetails.repo, prDetails.pull_number);
-                core.info(`diff: ${diff}`);
-            }
-            else {
-                core.info(`Unsupported event: ${process.env.GITHUB_EVENT_NAME}`);
-                return;
-            }
-            if (!diff) {
-                core.info("No diff found");
-                return;
-            }
-            const changedFiles = (0, parse_diff_1.default)(diff);
-            core.info(`Found ${changedFiles.length} changed files.`);
-            const excludePatterns = core
-                .getInput("exclude")
-                .split(",")
-                .map((s) => s.trim());
-            const filteredDiff = changedFiles.filter((file) => {
-                return !excludePatterns.some((pattern) => { var _a; return (0, minimatch_1.default)((_a = file.to) !== null && _a !== void 0 ? _a : "", pattern); });
-            });
-            core.info(`After filtering, ${filteredDiff.length} files remain.`);
-            const comments = yield analyzeCode(filteredDiff, prDetails);
-            if (APPROVE_REVIEWS || comments.length > 0) {
-                yield createReviewComment(prDetails.owner, prDetails.repo, prDetails.pull_number, comments);
-            }
-            else {
-                core.info("No comments to post.");
-            }
-            core.info("AI code review process completed successfully.");
+exports.getAIResponse = getAIResponse;
+
+
+/***/ }),
+
+/***/ 5069:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.createPrompt = void 0;
+const config_1 = __nccwpck_require__(88);
+function createPrompt(changedFiles, prDetails) {
+    const problemOutline = `Your task is to review pull requests (PR). Instructions:
+- Provide the response in following JSON format:  {"comments": [{"file": <file name>, "lineNumber": <line_number>, "reviewComment": "<review comment>"}]}
+- DO NOT give positive comments or compliments.
+- DO NOT give advice on renaming variable names or writing more descriptive variables.
+- Provide comments and suggestions ONLY if there is something to improve, otherwise return an empty array.
+- Provide at most ${config_1.REVIEW_MAX_COMMENTS} comments.
+- Write the comment in GitHub Markdown format.
+- Use the given description only for the overall context and only comment the code.
+${config_1.REVIEW_PROJECT_CONTEXT
+        ? `- Additional context regarding this PR's project: ${config_1.REVIEW_PROJECT_CONTEXT}`
+        : ""}
+- IMPORTANT: Suggest adding comments only for complex logic or non-obvious business rules that require explanation.
+- IMPORTANT: Evaluate the entire diff in the PR before adding any comments.
+
+Pull request title: ${prDetails.title}
+
+TAKE A DEEP BREATH AND WORK ON THIS PROBLEM STEP-BY-STEP.
+`;
+    const diffChunksPrompt = [];
+    for (const file of changedFiles) {
+        if (file.to === "/dev/null")
+            continue; // Ignore deleted files
+        for (const chunk of file.chunks) {
+            diffChunksPrompt.push(createPromptForDiffChunk(file, chunk));
         }
-        catch (error) {
-            core.error("Error:", error);
-            core.setFailed(`Action failed: ${error.message}`);
-            process.exit(1); // This line ensures the GitHub action fails
-        }
-    });
+    }
+    return `${problemOutline}\n ${diffChunksPrompt.join("\n")}`;
 }
-core.info("Starting AI code review action...");
-main().catch((error) => {
-    core.error("Unhandled error in main function:", error);
-    core.setFailed(`Unhandled error in main function: ${error.message}`);
-    process.exit(1);
+exports.createPrompt = createPrompt;
+function createPromptForDiffChunk(file, chunk) {
+    return `\n
+    Review the following code diff in the file "${file.to}". Git diff to review:
+  
+    \`\`\`diff
+    ${chunk.content}
+    ${chunk.changes
+        // @ts-expect-error - ln and ln2 exists where needed
+        .map((c) => `${c.ln ? c.ln : c.ln2} ${c.content}`)
+        .join("\n")}
+    \`\`\`
+    `;
+}
+
+
+/***/ }),
+
+/***/ 1366:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
 });
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.runReview = void 0;
+const core = __importStar(__nccwpck_require__(2186));
+const parse_diff_1 = __importDefault(__nccwpck_require__(4833));
+const minimatch_1 = __importDefault(__nccwpck_require__(2002));
+const github_1 = __nccwpck_require__(5928);
+const analyzeCode_1 = __nccwpck_require__(195);
+const config_1 = __nccwpck_require__(88);
+function runReview() {
+    return __awaiter(this, void 0, void 0, function* () {
+        core.info("Starting AI code review process...");
+        const prDetails = yield (0, github_1.getPRDetails)();
+        core.info(JSON.stringify(prDetails, null, 2));
+        const eventData = yield (0, github_1.getEventData)();
+        core.info(`Processing ${eventData.action} event...`);
+        const existingReview = yield (0, github_1.hasExistingReview)(prDetails.owner, prDetails.repo, prDetails.pull_number);
+        let diff = null;
+        if (eventData.action === "opened" ||
+            (eventData.action === "synchronize" && !existingReview)) {
+            diff = yield (0, github_1.getDiff)(prDetails.owner, prDetails.repo, prDetails.pull_number);
+        }
+        else if (eventData.action === "synchronize" && existingReview) {
+            const prResponse = yield getDiffDetails(prDetails);
+            diff = yield (0, github_1.getCompareDiff)(prDetails.owner, prDetails.repo, prResponse.baseSha, prResponse.headSha);
+        }
+        else if (eventData.action === "created") {
+            diff = yield (0, github_1.getDiff)(prDetails.owner, prDetails.repo, prDetails.pull_number);
+        }
+        else {
+            core.info(`Unsupported event: ${process.env.GITHUB_EVENT_NAME}`);
+            return;
+        }
+        if (!diff) {
+            core.info("No diff found");
+            return;
+        }
+        const changedFiles = (0, parse_diff_1.default)(diff);
+        core.info(`Found ${changedFiles.length} changed files.`);
+        const excludePatterns = core
+            .getInput("exclude")
+            .split(",")
+            .map((s) => s.trim());
+        const filteredDiff = changedFiles.filter((file) => {
+            return !excludePatterns.some((pattern) => { var _a; return (0, minimatch_1.default)((_a = file.to) !== null && _a !== void 0 ? _a : "", pattern); });
+        });
+        core.info(`After filtering, ${filteredDiff.length} files remain.`);
+        const comments = yield (0, analyzeCode_1.analyzeCode)(filteredDiff, prDetails);
+        if (config_1.APPROVE_REVIEWS || comments.length > 0) {
+            yield (0, github_1.createReviewComment)(prDetails.owner, prDetails.repo, prDetails.pull_number, comments);
+        }
+        else {
+            core.info("No comments to post.");
+        }
+        core.info("AI code review process completed successfully.");
+    });
+}
+exports.runReview = runReview;
+// Helper to fetch PR base/head SHA (if needed)
+function getDiffDetails(prDetails) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { owner, repo, pull_number } = prDetails;
+        const { Octokit } = yield Promise.resolve().then(() => __importStar(__nccwpck_require__(5375)));
+        const octokit = new Octokit();
+        const prResponse = yield octokit.pulls.get({
+            owner,
+            repo,
+            pull_number,
+        });
+        return {
+            baseSha: prResponse.data.base.sha,
+            headSha: prResponse.data.head.sha,
+        };
+    });
+}
 
 
 /***/ }),
@@ -15360,7 +15929,7 @@ exports["default"] = isPlainObject;
 
 /***/ }),
 
-/***/ 7786:
+/***/ 5822:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -15573,7 +16142,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.unescape = exports.escape = exports.Minimatch = exports.match = exports.makeRe = exports.braceExpand = exports.defaults = exports.filter = exports.GLOBSTAR = exports.sep = exports.minimatch = void 0;
 const brace_expansion_1 = __importDefault(__nccwpck_require__(3717));
-const brace_expressions_js_1 = __nccwpck_require__(7786);
+const brace_expressions_js_1 = __nccwpck_require__(5822);
 const escape_js_1 = __nccwpck_require__(9004);
 const unescape_js_1 = __nccwpck_require__(7305);
 const minimatch = (p, pattern, options = {}) => {
@@ -21174,7 +21743,7 @@ const resource_1 = __nccwpck_require__(9593);
 const AssistantsAPI = __importStar(__nccwpck_require__(616));
 const ChatAPI = __importStar(__nccwpck_require__(8691));
 const ThreadsAPI = __importStar(__nccwpck_require__(1931));
-const VectorStoresAPI = __importStar(__nccwpck_require__(5822));
+const VectorStoresAPI = __importStar(__nccwpck_require__(7124));
 class Beta extends resource_1.APIResource {
     constructor() {
         super(...arguments);
@@ -22071,7 +22640,7 @@ exports.VectorStoreFilesPage = VectorStoreFilesPage;
 
 /***/ }),
 
-/***/ 5822:
+/***/ 7124:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -22104,7 +22673,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.VectorStoresPage = exports.VectorStores = void 0;
 const resource_1 = __nccwpck_require__(9593);
 const core_1 = __nccwpck_require__(1798);
-const VectorStoresAPI = __importStar(__nccwpck_require__(5822));
+const VectorStoresAPI = __importStar(__nccwpck_require__(7124));
 const FileBatchesAPI = __importStar(__nccwpck_require__(3922));
 const FilesAPI = __importStar(__nccwpck_require__(9180));
 const pagination_1 = __nccwpck_require__(7401);
