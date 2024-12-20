@@ -162,13 +162,17 @@ function getPRDetails() {
     return __awaiter(this, void 0, void 0, function* () {
         core.info("Fetching PR details...");
         const eventPayload = JSON.parse((0, fs_1.readFileSync)(process.env.GITHUB_EVENT_PATH || "", "utf8"));
+        core.info(`Repository: ${eventPayload}`);
         const { repository, issue } = eventPayload;
         const number = issue.number;
+        core.info(`Repository: ${repository.full_name}`);
+        core.info(`PR Number: ${number}`);
         const prResponse = yield octokit.pulls.get({
             owner: repository.owner.login,
             repo: repository.name,
             pull_number: number,
         });
+        core.info(`PR details fetched for PR #${number}`);
         return {
             owner: repository.owner.login,
             repo: repository.name,
@@ -829,6 +833,7 @@ function runReview() {
     return __awaiter(this, void 0, void 0, function* () {
         core.info("Starting AI code review process...");
         const prDetails = yield (0, github_1.getPRDetails)();
+        core.info(JSON.stringify(prDetails, null, 2));
         const eventData = yield (0, github_1.getEventData)();
         core.info(`Processing ${eventData.action} event...`);
         const existingReview = yield (0, github_1.hasExistingReview)(prDetails.owner, prDetails.repo, prDetails.pull_number);

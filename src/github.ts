@@ -13,8 +13,13 @@ export async function getPRDetails(): Promise<PRDetails> {
     readFileSync(process.env.GITHUB_EVENT_PATH || "", "utf8")
   );
 
+  core.info(`Repository: ${eventPayload}`);
+
   const { repository, issue } = eventPayload;
   const number = issue.number;
+
+  core.info(`Repository: ${repository.full_name}`);
+  core.info(`PR Number: ${number}`);
 
   const prResponse = await octokit.pulls.get({
     owner: repository.owner.login,
@@ -22,6 +27,7 @@ export async function getPRDetails(): Promise<PRDetails> {
     pull_number: number,
   });
 
+  core.info(`PR details fetched for PR #${number}`);
   return {
     owner: repository.owner.login,
     repo: repository.name,

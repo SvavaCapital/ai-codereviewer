@@ -17,6 +17,7 @@ import { APPROVE_REVIEWS } from "./config";
 export async function runReview() {
   core.info("Starting AI code review process...");
   const prDetails = await getPRDetails();
+  core.info(JSON.stringify(prDetails, null, 2));
   const eventData = await getEventData();
   core.info(`Processing ${eventData.action} event...`);
   const existingReview = await hasExistingReview(
