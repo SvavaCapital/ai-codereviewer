@@ -295,6 +295,12 @@ function main() {
                 });
                 diff = String(response.data);
             }
+            else if (eventData.action === "issue_comment") {
+                const comment = eventData.comment.body;
+                core.info(`Comment: ${comment}`);
+                diff = yield getDiff(prDetails.owner, prDetails.repo, prDetails.pull_number);
+                core.info(`diff: ${diff}`);
+            }
             else {
                 core.info(`Unsupported event: ${process.env.GITHUB_EVENT_NAME}`);
                 return;
