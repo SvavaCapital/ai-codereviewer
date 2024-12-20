@@ -19,6 +19,8 @@ export interface GithubComment {
 }
 
 export interface GitHubEvent {
+  action: string;
+  number: number;
   repository: {
     full_name: string;
     name: string;

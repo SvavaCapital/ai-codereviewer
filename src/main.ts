@@ -404,7 +404,7 @@ import { runReview } from "./review";
 // }
 
 core.info("Starting AI code review action...");
-core.info("Testing: 1 Refactor code...");
+core.info("Testing: 2 Refactor code...");
 runReview().catch((error) => {
   core.error("Unhandled error in main function:", error);
   core.setFailed(

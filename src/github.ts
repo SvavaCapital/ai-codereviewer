@@ -13,10 +13,30 @@ export async function getPRDetails(): Promise<PRDetails> {
     readFileSync(process.env.GITHUB_EVENT_PATH || "", "utf8")
   );
 
-  core.info(`eventPayload featched: ${JSON.stringify(eventPayload, null, 2)}`);
+  core.info(`eventPayload fetched: ${JSON.stringify(eventPayload, null, 2)}`);
 
-  const { repository, issue } = eventPayload;
-  const number = issue.number;
+  const { repository, action } = eventPayload;
+  let number: number | null = null;
+
+  switch (action) {
+    case "opened":
+    case "synchronize":
+      core.info("Action is opened or synchronized");
+      number = eventPayload.number;
+      break;
+    case "created":
+      core.info("Action is created");
+      number = eventPayload.issue.number;
+      break;
+    default:
+      core.info("Action is not recognized");
+  }
+
+  if (number === null) {
+    throw new Error(
+      "PR number could not be determined from the event payload."
+    );
+  }
 
   core.info(`Repository: ${repository.full_name}`);
   core.info(`PR Number: ${number}`);

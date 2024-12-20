@@ -162,9 +162,25 @@ function getPRDetails() {
     return __awaiter(this, void 0, void 0, function* () {
         core.info("Fetching PR details...");
         const eventPayload = JSON.parse((0, fs_1.readFileSync)(process.env.GITHUB_EVENT_PATH || "", "utf8"));
-        core.info(`eventPayload featched: ${JSON.stringify(eventPayload, null, 2)}`);
-        const { repository, issue } = eventPayload;
-        const number = issue.number;
+        core.info(`eventPayload fetched: ${JSON.stringify(eventPayload, null, 2)}`);
+        const { repository, action } = eventPayload;
+        let number = null;
+        switch (action) {
+            case "opened":
+            case "synchronize":
+                core.info("Action is opened or synchronized");
+                number = eventPayload.number;
+                break;
+            case "created":
+                core.info("Action is created");
+                number = eventPayload.issue.number;
+                break;
+            default:
+                core.info("Action is not recognized");
+        }
+        if (number === null) {
+            throw new Error("PR number could not be determined from the event payload.");
+        }
         core.info(`Repository: ${repository.full_name}`);
         core.info(`PR Number: ${number}`);
         const prResponse = yield octokit.pulls.get({
@@ -621,7 +637,7 @@ const review_1 = __nccwpck_require__(1366);
 //   }
 // }
 core.info("Starting AI code review action...");
-core.info("Testing: 1 Refactor code...");
+core.info("Testing: 2 Refactor code...");
 (0, review_1.runReview)().catch((error) => {
     core.error("Unhandled error in main function:", error);
     core.setFailed(`Unhandled error in main function: ${error.message}`);
