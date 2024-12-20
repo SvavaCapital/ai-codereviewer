@@ -162,7 +162,7 @@ function getPRDetails() {
     return __awaiter(this, void 0, void 0, function* () {
         core.info("Fetching PR details...");
         const eventPayload = JSON.parse((0, fs_1.readFileSync)(process.env.GITHUB_EVENT_PATH || "", "utf8"));
-        core.info(`Repository: ${eventPayload}`);
+        core.info(`eventPayload featched: ${JSON.stringify(eventPayload, null, 2)}`);
         const { repository, issue } = eventPayload;
         const number = issue.number;
         core.info(`Repository: ${repository.full_name}`);

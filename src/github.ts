@@ -13,7 +13,7 @@ export async function getPRDetails(): Promise<PRDetails> {
     readFileSync(process.env.GITHUB_EVENT_PATH || "", "utf8")
   );
 
-  core.info(`Repository: ${eventPayload}`);
+  core.info(`eventPayload featched: ${JSON.stringify(eventPayload, null, 2)}`);
 
   const { repository, issue } = eventPayload;
   const number = issue.number;
