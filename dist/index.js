@@ -852,15 +852,9 @@ function runReview() {
         core.info(JSON.stringify(prDetails, null, 2));
         const eventData = yield (0, github_1.getEventData)();
         core.info(`Processing ${eventData.action} event...`);
-        const existingReview = yield (0, github_1.hasExistingReview)(prDetails.owner, prDetails.repo, prDetails.pull_number);
         let diff = null;
-        if (eventData.action === "opened" ||
-            (eventData.action === "synchronize" && !existingReview)) {
+        if (eventData.action === "opened" || eventData.action === "synchronize") {
             diff = yield (0, github_1.getDiff)(prDetails.owner, prDetails.repo, prDetails.pull_number);
-        }
-        else if (eventData.action === "synchronize" && existingReview) {
-            const prResponse = yield getDiffDetails(prDetails);
-            diff = yield (0, github_1.getCompareDiff)(prDetails.owner, prDetails.repo, prResponse.baseSha, prResponse.headSha);
         }
         else if (eventData.action === "created") {
             diff = yield (0, github_1.getDiff)(prDetails.owner, prDetails.repo, prDetails.pull_number);

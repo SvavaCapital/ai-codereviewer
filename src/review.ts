@@ -20,29 +20,13 @@ export async function runReview() {
   core.info(JSON.stringify(prDetails, null, 2));
   const eventData = await getEventData();
   core.info(`Processing ${eventData.action} event...`);
-  const existingReview = await hasExistingReview(
-    prDetails.owner,
-    prDetails.repo,
-    prDetails.pull_number
-  );
 
   let diff: string | null = null;
-  if (
-    eventData.action === "opened" ||
-    (eventData.action === "synchronize" && !existingReview)
-  ) {
+  if (eventData.action === "opened" || eventData.action === "synchronize") {
     diff = await getDiff(
       prDetails.owner,
       prDetails.repo,
       prDetails.pull_number
-    );
-  } else if (eventData.action === "synchronize" && existingReview) {
-    const prResponse = await getDiffDetails(prDetails);
-    diff = await getCompareDiff(
-      prDetails.owner,
-      prDetails.repo,
-      prResponse.baseSha,
-      prResponse.headSha
     );
   } else if (eventData.action === "created") {
     diff = await getDiff(
