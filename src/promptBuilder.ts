@@ -4,7 +4,7 @@ import { REVIEW_PROJECT_CONTEXT, REVIEW_MAX_COMMENTS } from "./config";
 
 export function createPrompt(
   changedFiles: File[],
-  prDetails: PRDetails
+  prDetails: PRDetails,
 ): string {
   const problemOutline = `Your task is to review pull requests (PR). Instructions:
 - Provide the response in following JSON format:  {"comments": [{"file": <file name>, "lineNumber": <line_number>, "reviewComment": "<review comment>"}]}

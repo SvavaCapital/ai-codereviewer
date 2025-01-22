@@ -47,6 +47,8 @@ function analyzeCode(changedFiles, prDetails) {
     return __awaiter(this, void 0, void 0, function* () {
         core.info("Analyzing code...");
         const prompt = (0, promptBuilder_1.createPrompt)(changedFiles, prDetails);
+        core.info(`Prompt created :- ${prompt}`);
+        core.info("Sending to OpenAI for analysis...");
         const aiResponse = yield (0, openaiClient_1.getAIResponse)(prompt);
         const comments = createComments(changedFiles, aiResponse);
         core.info(`Analysis complete. Generated ${comments.length} comments.`);
@@ -762,7 +764,7 @@ function createPrompt(changedFiles, prDetails) {
 ${config_1.REVIEW_PROJECT_CONTEXT
         ? `- Additional context regarding this PR's project: ${config_1.REVIEW_PROJECT_CONTEXT}`
         : ""}
-- IMPORTANT: Suggest adding comments only for complex logic or non-obvious business rules that require explanation.
+- IMPORTANT: NEVER suggest adding comments to the code.
 - IMPORTANT: Evaluate the entire diff in the PR before adding any comments.
 
 Pull request title: ${prDetails.title}

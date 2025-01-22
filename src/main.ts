@@ -408,7 +408,7 @@ core.info("Testing: 2 Refactor code...");
 runReview().catch((error) => {
   core.error("Unhandled error in main function:", error);
   core.setFailed(
-    `Unhandled error in main function: ${(error as Error).message}`
+    `Unhandled error in main function: ${(error as Error).message}`,
   );
   process.exit(1);
 });

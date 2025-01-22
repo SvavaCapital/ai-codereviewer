@@ -26,13 +26,13 @@ export async function runReview() {
     diff = await getDiff(
       prDetails.owner,
       prDetails.repo,
-      prDetails.pull_number
+      prDetails.pull_number,
     );
   } else if (eventData.action === "created") {
     diff = await getDiff(
       prDetails.owner,
       prDetails.repo,
-      prDetails.pull_number
+      prDetails.pull_number,
     );
   } else {
     core.info(`Unsupported event: ${process.env.GITHUB_EVENT_NAME}`);
@@ -53,7 +53,7 @@ export async function runReview() {
     .map((s) => s.trim());
   const filteredDiff = changedFiles.filter((file: any) => {
     return !excludePatterns.some((pattern) =>
-      minimatch(file.to ?? "", pattern)
+      minimatch(file.to ?? "", pattern),
     );
   });
 
@@ -65,7 +65,7 @@ export async function runReview() {
       prDetails.owner,
       prDetails.repo,
       prDetails.pull_number,
-      comments
+      comments,
     );
   } else {
     core.info("No comments to post.");

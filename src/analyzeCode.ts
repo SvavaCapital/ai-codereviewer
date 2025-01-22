@@ -6,10 +6,12 @@ import { getAIResponse } from "./openaiClient";
 
 export async function analyzeCode(
   changedFiles: File[],
-  prDetails: PRDetails
+  prDetails: PRDetails,
 ): Promise<GithubComment[]> {
   core.info("Analyzing code...");
   const prompt = createPrompt(changedFiles, prDetails);
+  core.info(`Prompt created :- ${prompt}`);
+  core.info("Sending to OpenAI for analysis...");
   const aiResponse = await getAIResponse(prompt);
   const comments = createComments(changedFiles, aiResponse);
   core.info(`Analysis complete. Generated ${comments.length} comments.`);
@@ -18,7 +20,7 @@ export async function analyzeCode(
 
 function createComments(
   changedFiles: File[],
-  aiResponses: AICommentResponse[]
+  aiResponses: AICommentResponse[],
 ): GithubComment[] {
   return aiResponses
     .flatMap((aiResponse) => {
