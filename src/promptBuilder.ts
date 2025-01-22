@@ -19,7 +19,7 @@ ${
     ? `- Additional context regarding this PR's project: ${REVIEW_PROJECT_CONTEXT}`
     : ""
 }
-- IMPORTANT: Suggest adding comments only for complex logic or non-obvious business rules that require explanation.
+- IMPORTANT: NEVER suggest adding comments to the code.
 - IMPORTANT: Evaluate the entire diff in the PR before adding any comments.
 
 Pull request title: ${prDetails.title}
