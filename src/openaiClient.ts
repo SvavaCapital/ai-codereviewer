@@ -15,7 +15,7 @@ interface QueryConfig {
 }
 
 export async function getAIResponse(
-  prompt: string
+  prompt: string,
 ): Promise<AICommentResponse[]> {
   core.info("Sending request to OpenAI API...");
 

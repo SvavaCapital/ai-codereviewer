@@ -10,7 +10,7 @@ export async function getPRDetails(): Promise<PRDetails> {
   core.info("Fetching PR details...");
 
   const eventPayload: GitHubEvent = JSON.parse(
-    readFileSync(process.env.GITHUB_EVENT_PATH || "", "utf8")
+    readFileSync(process.env.GITHUB_EVENT_PATH || "", "utf8"),
   );
 
   core.info(`eventPayload fetched: ${JSON.stringify(eventPayload, null, 2)}`);
@@ -34,7 +34,7 @@ export async function getPRDetails(): Promise<PRDetails> {
 
   if (number === null) {
     throw new Error(
-      "PR number could not be determined from the event payload."
+      "PR number could not be determined from the event payload.",
     );
   }
 
@@ -60,7 +60,7 @@ export async function getPRDetails(): Promise<PRDetails> {
 export async function getDiff(
   owner: string,
   repo: string,
-  pull_number: number
+  pull_number: number,
 ): Promise<string | null> {
   core.info(`Fetching diff for PR #${pull_number}...`);
 
@@ -78,7 +78,7 @@ export async function getDiff(
 export async function hasExistingReview(
   owner: string,
   repo: string,
-  pull_number: number
+  pull_number: number,
 ): Promise<boolean> {
   const reviews = await octokit.pulls.listReviews({
     owner,
@@ -92,7 +92,7 @@ export async function createReviewComment(
   owner: string,
   repo: string,
   pull_number: number,
-  comments: Array<GithubComment>
+  comments: Array<GithubComment>,
 ): Promise<void> {
   core.info(`Creating review comment for PR #${pull_number}...`);
 
@@ -105,7 +105,7 @@ export async function createReviewComment(
   });
 
   core.info(
-    `Review ${APPROVE_REVIEWS ? "approved" : "commented"} successfully.`
+    `Review ${APPROVE_REVIEWS ? "approved" : "commented"} successfully.`,
   );
 }
 
@@ -113,7 +113,7 @@ export async function getCompareDiff(
   owner: string,
   repo: string,
   base: string,
-  head: string
+  head: string,
 ): Promise<string> {
   const response = await octokit.repos.compareCommits({
     headers: {
